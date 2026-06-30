@@ -3,3 +3,5 @@ chatbot.db
 __pycache__/
 myenv/
 CLAUDE.md
+chatbot.db-shm
+chatbot.db-wal
