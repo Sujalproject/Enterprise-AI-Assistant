@@ -1,12 +1,12 @@
 # 🤖 Enterprise AI Assistant
 
-An enterprise-grade AI assistant built with **LangGraph**, **LangChain**, and **Retrieval-Augmented Generation (RAG)**. It intelligently routes user queries between conversational AI and enterprise knowledge retrieval while dynamically invoking tools when required to provide accurate, context-aware responses.
+An enterprise-grade AI assistant powered by **Large Language Models (LLMs)**, **LangGraph**, and **LangChain**. The assistant intelligently routes user queries between conversational AI and an advanced Retrieval-Augmented Generation (RAG) pipeline while supporting dynamic tool execution, web search, and end-to-end observability through **LangSmith**.
 
 <p align="center">
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue?style=for-the-badge&logo=python)
 ![LangChain](https://img.shields.io/badge/LangChain-Framework-green?style=for-the-badge)
-![LangGraph](https://img.shields.io/badge/LangGraph-Agentic_AI-blue?style=for-the-badge)
+![LangGraph](https://img.shields.io/badge/LangGraph-Agentic%20AI-blue?style=for-the-badge)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker)
 ![License](https://img.shields.io/badge/License-MIT-success?style=for-the-badge)
@@ -15,103 +15,74 @@ An enterprise-grade AI assistant built with **LangGraph**, **LangChain**, and **
 
 ---
 
-## 📖 Overview
+# 📖 Overview
 
-Enterprise AI Assistant is an intelligent assistant designed to answer both general and enterprise-specific questions.
+Enterprise AI Assistant is an intelligent assistant designed to answer both general-purpose and enterprise-specific questions.
 
-The system uses an **agentic workflow** that first determines the nature of the user's request. General conversations are handled directly by the LLM, which can invoke external tools whenever necessary. Enterprise-related questions are processed through an advanced Retrieval-Augmented Generation (RAG) pipeline, ensuring responses are grounded in uploaded documents and external knowledge when needed.
+The assistant first analyzes the user's query and intelligently routes it to the most suitable workflow. General conversations are handled through an LLM capable of invoking external tools whenever required. Enterprise-specific questions are processed through a Retrieval-Augmented Generation (RAG) pipeline, enabling grounded responses based on uploaded documents and external knowledge sources.
 
-By combining intelligent routing, document retrieval, tool calling, and response evaluation, the assistant delivers reliable and context-aware answers.
+To improve answer quality, the system incorporates **Corrective RAG (CRAG)**, **Self-RAG**, automatic query rewriting, and web search fallback. Additionally, **LangSmith** is integrated to provide complete observability of the agent workflow, making debugging, monitoring, and performance analysis easier.
 
 ---
 
-## ✨ Features
+# ✨ Features
 
 - 🤖 Intelligent query routing
-- 💬 Natural conversational AI
+- 💬 General conversational AI
 - 🛠️ Dynamic tool calling
-- 📄 Multi-document PDF chat
+- 📄 Multi-PDF document question answering
 - 🔍 Retrieval-Augmented Generation (RAG)
 - ✅ Corrective RAG (CRAG)
 - 🧠 Self-RAG response evaluation
 - 🔄 Automatic query rewriting
-- 🌐 Web search fallback
-- 📚 Citation-supported answers
-- 💾 Multi-thread conversation support
+- 🌐 Web search integration using Tavily
+- 📚 Citation-supported responses
+- 💾 Multi-thread conversations
+- 📊 End-to-end observability using LangSmith
 - ⚡ FastAPI backend
-- 🐳 Docker support
+- 🐳 Dockerized deployment
 
 ---
 
-## ⚙️ Workflow
+# 🏗️ Architecture
 
 ```text
-                    User Query
-                         │
-                         ▼
-                  Intent Router
-                  /            \
-                 /              \
-                ▼                ▼
-        General Chat         RAG Pipeline
-              │                   │
-              │             Retrieve Documents
-              │                   │
-              │             Grade Documents
-              │                   │
-              │          ┌────────┴────────┐
-              │          │                 │
-              │          ▼                 ▼
-              │    Generate         Rewrite Query
-              │    Response               │
-              │                           ▼
-              │                     Web Search
-              │                           │
-              └──────────────┬────────────┘
-                             ▼
-                    Response Generation
-                             │
-                             ▼
-                     Self Evaluation
-                             │
-                             ▼
-                      Final Response
-```
-
-### Chat Workflow
-
-The conversational branch supports dynamic tool execution.
-
-```text
-User Query
-      │
-      ▼
-  Chat Node
-      │
-      ▼
-     LLM
-      │
- ┌────┴────┐
- │         │
- ▼         ▼
-Reply   Tool Call
-            │
-            ▼
-       Tool Execution
-            │
-            ▼
-      Tool Response
-            │
-            ▼
-           LLM
-            │
-            ▼
-     Final Answer
+                          User Query
+                               │
+                               ▼
+                        Intelligent Router
+                      ┌─────────┴─────────┐
+                      │                   │
+                      ▼                   ▼
+               General Chat          RAG Pipeline
+                      │                   │
+               LLM with Tools      Retrieve Documents
+                      │                   │
+          ┌───────────┴───────────┐       ▼
+          │                       │   Grade Documents
+          ▼                       │       │
+   Direct Response                │       ▼
+                                  │  Relevant?
+                                  │   │      │
+                                  │ Yes      No
+                                  │   │      │
+                                  │   ▼      ▼
+                                  │Generate Rewrite Query
+                                  │Answer       │
+                                  │             ▼
+                                  │       Web Search
+                                  │             │
+                                  └──────┬──────┘
+                                         ▼
+                                Self-RAG Evaluation
+                                         │
+                                         ▼
+                                  Final Response
 ```
 
 ---
 
-## 🛠️ Tech Stack
+# 🛠️ Tech Stack
 
 | Category | Technology |
 |----------|------------|
@@ -120,15 +91,33 @@ Reply   Tool Call
 | Agent Framework | LangGraph |
 | LLM Provider | Groq |
 | Embeddings | Hugging Face |
-| Vector Database | FAISS |
+| Vector Store | FAISS |
+| Web Search | Tavily |
+| Observability | LangSmith |
 | Backend | FastAPI |
 | Containerization | Docker |
 
 ---
 
-## 🚀 Getting Started
+# 📊 Observability
 
-### Clone the Repository
+This project integrates **LangSmith** to provide comprehensive observability across the entire agent workflow.
+
+### LangSmith enables:
+
+- Visualizing LangGraph execution flow
+- Tracking every node execution
+- Monitoring LLM requests and responses
+- Inspecting tool invocations
+- Debugging retrieval pipelines
+- Measuring latency and execution time
+- Simplifying troubleshooting and performance optimization
+
+---
+
+# 🚀 Getting Started
+
+## Clone the Repository
 
 ```bash
 git clone https://github.com/your-username/enterprise-ai-assistant.git
@@ -136,7 +125,7 @@ git clone https://github.com/your-username/enterprise-ai-assistant.git
 cd enterprise-ai-assistant
 ```
 
-### Create a Virtual Environment
+## Create a Virtual Environment
 
 ```bash
 python -m venv .venv
@@ -154,15 +143,19 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-### Install Dependencies
+---
+
+## Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 🔑 Environment Variables
+---
 
-Create a `.env` file in the project root and add the following variables:
+## Configure Environment Variables
+
+Create a `.env` file in the project root.
 
 ```env
 HF_TOKEN=your_huggingface_token
@@ -177,66 +170,70 @@ LANGSMITH_API_KEY=your_langsmith_api_key
 LANGSMITH_PROJECT=Enterprise-AI-Assistant
 ```
 
-### Run the Application
+---
+
+## Run the Application
 
 ```bash
-streamlit run app.py
+uvicorn app:app --reload
 ```
 
 ---
 
-## 💡 Use Cases
+# 💡 Use Cases
 
 - Enterprise Knowledge Assistant
-- Internal Documentation Search
 - HR Policy Assistant
+- Internal Documentation Search
 - Technical Documentation Q&A
 - AI Research Assistant
 - Company Knowledge Base
+- Multi-document Question Answering
 
 ---
 
-## 🗺️ Roadmap
+# 🛣️ Roadmap
 
-- [x] Intelligent query routing
-- [x] Multi-PDF support
-- [x] Retrieval-Augmented Generation (RAG)
-- [x] Corrective RAG (CRAG)
-- [x] Self-RAG evaluation
-- [x] Dynamic tool calling
-- [x] Query rewriting
-- [x] Citation support
-- [x] Multi-thread conversations
-- [ ] SQL database tool
-- [ ] Long-term memory
-- [ ] Multi-agent collaboration
-- [ ] MCP integration
-- [ ] Authentication & authorization
+- ✅ Intelligent Query Routing
+- ✅ Agentic Workflow
+- ✅ Multi-PDF Chat
+- ✅ Retrieval-Augmented Generation (RAG)
+- ✅ Corrective RAG (CRAG)
+- ✅ Self-RAG
+- ✅ Dynamic Tool Calling
+- ✅ Query Rewriting
+- ✅ Tavily Web Search
+- ✅ LangSmith Observability
+- ✅ Docker Support
+- 🔄 SQL Database Tool
+- 🔄 Long-Term Memory
+- 🔄 MCP Integration
+- 🔄 Authentication & Authorization
 
 ---
 
-## 🤝 Contributing
+# 🤝 Contributing
 
 Contributions are welcome!
 
 1. Fork the repository.
-2. Create a feature branch.
+2. Create a new feature branch.
 3. Commit your changes.
 4. Push the branch.
 5. Open a Pull Request.
 
 ---
 
-## 📄 License
+# 📄 License
 
 This project is licensed under the MIT License.
 
 ---
 
-## 👨‍💻 Author
+# 👨‍💻 Author
 
 **Sujal Patwa**
 
 📧 **sujalkumarpatwa1@gmail.com**
 
-If you find this project useful, consider giving it a ⭐ on GitHub.
+If you find this project helpful, consider giving it a ⭐ to support the project!
