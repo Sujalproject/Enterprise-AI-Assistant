@@ -160,19 +160,27 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Configure Environment Variables
+## 🔑 Environment Variables
 
-Create a `.env` file.
+Create a `.env` file in the project root and add the following variables:
 
 ```env
-GROQ_API_KEY=your_groq_api_key
 HF_TOKEN=your_huggingface_token
+
+GROQ_API_KEY=your_groq_api_key
+
+TAVILY_API_KEY=your_tavily_api_key
+
+LANGSMITH_TRACING=true
+LANGSMITH_ENDPOINT=https://api.smith.langchain.com
+LANGSMITH_API_KEY=your_langsmith_api_key
+LANGSMITH_PROJECT=Enterprise-AI-Assistant
 ```
 
 ### Run the Application
 
 ```bash
-uvicorn app:app --reload
+streamlit run app.py
 ```
 
 ---
