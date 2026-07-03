@@ -175,7 +175,7 @@ LANGSMITH_PROJECT=Enterprise-AI-Assistant
 ## Run the Application
 
 ```bash
-uvicorn app:app --reload
+streamlit run app.py
 ```
 
 ---
