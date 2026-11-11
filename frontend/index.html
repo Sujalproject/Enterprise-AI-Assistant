@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LangGraph RAG Assistant</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Mobile backdrop -->
+    <div id="sidebarBackdrop" class="sidebar-backdrop" aria-hidden="true"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar" aria-label="Chat history">
+      <div class="sidebar-header">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+              <path d="M2 17l10 5 10-5"></path>
+              <path d="M2 12l10 5 10-5"></path>
+            </svg>
+          </span>
+          <div>
+            <div class="brand-name">LangGraph RAG</div>
+            <div class="brand-sub">CRAG + Tool Agent</div>
+          </div>
+        </div>
+        <button id="newChatBtn" class="btn-new-chat" type="button" title="Start a new chat">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>New Chat</span>
+        </button>
+      </div>
+
+      <div class="sidebar-section-title">Conversations</div>
+      <nav id="threadList" class="thread-list" aria-label="Previous threads">
+        <div class="thread-empty">Loading threads...</div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="health-pill" id="healthStatus">
+          <span class="health-dot"></span>
+          <span class="health-text">Checking API...</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="main-panel" id="dropZone">
+      <!-- Drag-and-drop overlay -->
+      <div id="dropOverlay" class="drop-overlay" aria-hidden="true">
+        <div class="drop-card">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="12" y1="18" x2="12" y2="12"></line>
+            <polyline points="9 15 12 12 15 15"></polyline>
+          </svg>
+          <div>Drop PDF to index for this chat</div>
+        </div>
+      </div>
+
+      <!-- Top Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button id="menuToggleBtn" class="icon-btn mobile-only" type="button" aria-label="Toggle sidebar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <div class="thread-meta">
+            <span class="thread-label">Thread</span>
+            <code id="activeThreadBadge" class="thread-id-badge">New Session</code>
+          </div>
+        </div>
+
+        <div class="topbar-right" id="pdfBadges"></div>
+      </header>
+
+      <!-- Toast / Error Banner -->
+      <div id="toastBanner" class="toast-banner" role="status" aria-live="polite" hidden></div>
+
+      <!-- Message Feed -->
+      <section id="messagesContainer" class="messages-container">
+        <div id="emptyState" class="empty-state">
+          <div class="empty-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </div>
+          <h1>Ask anything or upload a PDF</h1>
+          <p>
+            General questions use chat &amp; tools (search, calculator, stocks).
+            Upload a PDF to run Corrective + Self-RAG over your documents.
+          </p>
+          <div class="starter-grid">
+            <button class="starter-chip" type="button" data-prompt="What can you help me with?">
+              What can you help me with?
+            </button>
+            <button class="starter-chip" type="button" data-prompt="Calculate 42.5 * 18 and explain the steps.">
+              Calculate 42.5 * 18
+            </button>
+            <button class="starter-chip" type="button" data-prompt="Summarize the key points from the uploaded PDF.">
+              Summarize uploaded PDF
+            </button>
+          </div>
+        </div>
+
+        <div id="messagesList" class="messages-list"></div>
+      </section>
+
+      <!-- Composer -->
+      <footer class="composer-wrap">
+        <form id="chatForm" class="composer">
+          <input id="pdfInput" type="file" accept=".pdf,application/pdf" hidden />
+          <button
+            id="uploadBtn"
+            class="icon-btn upload-btn"
+            type="button"
+            title="Upload PDF for RAG"
+            aria-label="Upload PDF"
+          >
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+            </svg>
+          </button>
+
+          <textarea
+            id="messageInput"
+            rows="1"
+            placeholder="Message the assistant or drop a PDF here..."
+            aria-label="Message input"
+          ></textarea>
+
+          <button id="sendBtn" class="send-btn" type="submit" title="Send message" aria-label="Send message">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+
+          <button id="stopBtn" class="stop-btn" type="button" title="Stop response" aria-label="Stop response" hidden>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="6" width="12" height="12" rx="2"></rect>
+            </svg>
+          </button>
+        </form>
+        <div class="composer-hint">
+          Enter to send &middot; Shift+Enter for new line &middot; Drag &amp; drop PDF anywhere to attach
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
+

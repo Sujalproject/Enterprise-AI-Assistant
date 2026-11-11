@@ -7,7 +7,13 @@ class docEval(BaseModel):
     score: float
     
 class KeepOrDrop(BaseModel):
-    keep: bool
+    keep: bool = Field(
+        description="Whether the retrieved document is relevant. True to keep, False to drop."
+    )
+    reason: str = Field(
+        default="",
+        description="Short reason why the sentence was kept or dropped.",
+    )
     
 class WebQuery(BaseModel):
     query: str

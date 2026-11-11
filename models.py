@@ -36,7 +36,7 @@ class MyInput(TypedDict):
     rewrite_tries: NotRequired[int]
     
 
-model=ChatGroq(model="llama-3.3-70b-versatile")
+model=ChatGroq(model="qwen/qwen3.8-27b")
 
 embeddings_model = HuggingFaceEmbeddings(
     model_name="BAAI/bge-base-en-v1.5"

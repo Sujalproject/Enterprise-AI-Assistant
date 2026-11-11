@@ -19,7 +19,7 @@ doc_eval_prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
-doc_eval_chain = doc_eval_prompt | model.with_structured_output(docEval)
+doc_eval_chain = doc_eval_prompt | model.with_structured_output(docEval , method="json_mode")
 
 filter_prompt = ChatPromptTemplate.from_messages(
     [
@@ -27,13 +27,14 @@ filter_prompt = ChatPromptTemplate.from_messages(
             "system",
             "You are a strict relevance filter.\n"
             "Return keep=true only if the sentence directly helps answer the question.\n"
-            "Use ONLY the sentence. Output JSON only.",
+            "Use ONLY the sentence.\n"
+            "Return JSON with keys: keep (boolean), reason (short 1-line string).",
         ),
         ("human", "Question: {question}\n\nSentence:\n{sentence}"),
     ]
 )
 
-filter_chain = filter_prompt | model.with_structured_output(KeepOrDrop)
+filter_chain = filter_prompt | model.with_structured_output(KeepOrDrop , method="json_mode")
 
 
 rewrite_prompt = ChatPromptTemplate.from_messages(
@@ -51,7 +52,7 @@ rewrite_prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
-rewrite_chain = rewrite_prompt | model.with_structured_output(WebQuery)
+rewrite_chain = rewrite_prompt | model.with_structured_output(WebQuery , method="json_mode")
 
 generation_prompt = ChatPromptTemplate.from_messages(
     [
@@ -101,7 +102,7 @@ issup_prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
-issup_llm_chain =issup_prompt | model.with_structured_output(IsSUPDecision)
+issup_llm_chain =issup_prompt | model.with_structured_output(IsSUPDecision , method="json_mode")
 
 
 revise_prompt = ChatPromptTemplate.from_messages(
@@ -151,7 +152,7 @@ isuse_prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
-isuse_llm_chain= isuse_prompt | model.with_structured_output(IsUSEDecision)
+isuse_llm_chain= isuse_prompt | model.with_structured_output(IsUSEDecision, method="json_mode")
 
 rewrite_for_retrieval_prompt = ChatPromptTemplate.from_messages(
     [
@@ -180,4 +181,4 @@ rewrite_for_retrieval_prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
-rewrite_llm_chain = rewrite_for_retrieval_prompt |model.with_structured_output(RewriteDecision)
+rewrite_llm_chain = rewrite_for_retrieval_prompt |model.with_structured_output(RewriteDecision , method="json_mode")

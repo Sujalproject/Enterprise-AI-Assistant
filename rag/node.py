@@ -1,6 +1,7 @@
 from models import MyInput
 from typing import List, Literal
 from langchain_core.documents import Document
+from langchain_core.messages import AIMessage
 from langchain_core.runnables import RunnableConfig
 from langchain_community.tools.tavily_search import TavilySearchResults
 from .prompt import doc_eval_chain,filter_chain,rewrite_chain,generation_prompt,issup_llm_chain,revise_prompt,isuse_llm_chain,rewrite_llm_chain
@@ -163,13 +164,17 @@ def revise_answer(state: MyInput):
     }
     
 def is_use(state: MyInput) -> MyInput:
-    decision= isuse_llm_chain.invoke(
+    answer = state.get("answer", "")
+    decision = isuse_llm_chain.invoke(
         {
             "question": state["question"],
-            "answer": state.get("answer", ""),
+            "answer": answer,
         }
     )
-    return {"isuse": decision.isuse, "use_reason": decision.reason}
+    out = {"isuse": decision.isuse, "use_reason": decision.reason}
+    if decision.isuse == "useful" and answer:
+        out["messages"] = [AIMessage(content=answer)]
+    return out
 
 MAX_REWRITE_TRIES = 3  # tune (2–4 is usually fine)
 
@@ -196,4 +201,9 @@ def rewrite_question(state: MyInput):
     }
     
 def no_answer_found(state: MyInput):
-    return {"answer": "No answer found.", "context": ""}
+    msg = "No answer found."
+    return {
+        "answer": msg,
+        "refined_context": "",
+        "messages": [AIMessage(content=msg)],
+    }

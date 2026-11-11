@@ -4,7 +4,7 @@ from langchain_community.vectorstores import FAISS
 from typing import Annotated, Any, Dict, Optional
 from models import embeddings_model
 import tempfile
-from retriever import _THREAD_VECTORSTORE,_THREAD_METADATA
+from .retriever import _THREAD_VECTORSTORE, _THREAD_METADATA
 import os
 
 def ingest_pdf(file_bytes: bytes, thread_id: str, filename: Optional[str] = None) -> dict:

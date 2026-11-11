@@ -32,7 +32,7 @@ for thread_id in st.session_state["chat_thread_ids"][::-1]:
             if isinstance(msg,HumanMessage):
                 role = "user"
             else:
-                role = "assistance"
+                role = "assistant"
         
             temp_messages.append({'role':role,'content':msg.content})
         

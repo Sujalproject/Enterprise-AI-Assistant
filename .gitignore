@@ -1,7 +1,19 @@
-.env
-chatbot.db
-__pycache__/
+# Virtual environment
 myenv/
+venv/
+.venv/
+
+# Environment variables
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Database
+*.db
+
+# Generated files
+workflow.png
+
 CLAUDE.md
-chatbot.db-shm
-chatbot.db-wal

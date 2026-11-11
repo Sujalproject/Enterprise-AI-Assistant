@@ -10,14 +10,16 @@ def router_node(state):
     question = extract_question(state)
 
     system_prompt = """
-    You are a routing assistant.
+    You are an intelligent query routing assistant.
+
+    Decide which datasource should handle the user's question.
 
     Route to:
     - rag:
         - Questions about uploaded PDFs/documents.
         - Questions requiring information from the enterprise knowledge base.
         - Questions like "according to the document", "summarize the PDF",
-        "what does the policy say", etc.
+          "what does the policy say", etc.
 
     - chat:
         - General conversation.
@@ -25,9 +27,16 @@ def router_node(state):
         - Math.
         - Greetings.
         - Tool usage.
-        - Any question that does NOT require the uploaded documents.
+        - Questions that do NOT require uploaded documents.
 
-    Return only the datasource.
+    Return ONLY valid JSON.
+
+    The JSON must follow this exact structure:
+    {
+        "datasource": "rag"
+    }
+
+    The datasource value must be either "rag" or "chat".
     """
 
     result = router_llm.invoke([
@@ -56,7 +65,6 @@ def router_node(state):
         "retries": 0,
         "rewrite_tries": 0,
     }
-    
 def route_decision(state):
     return state["route"]
 

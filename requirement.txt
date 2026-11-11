@@ -1,35 +1,46 @@
+
 # LangChain Core
 langchain
 langchain-core
+langchain-text-splitters
 
+# LangGraph
+langgraph
+langgraph-checkpoint-sqlite
 
-# Hugging Face Integration
+# Hugging Face
 langchain-huggingface
 transformers
 huggingface-hub
 sentence-transformers
 
-# Environment Variable Management
-python-dotenv
-
-# Machine Learning Utilities
-numpy
-scikit-learn
-
-torch 
-torchvision
-torchaudio
-
-Pydantic
-
-langgraph
-
-#UI 
-streamlit
-
-langgraph-checkpoint-sqlite
+# LLM Provider
 langchain-groq
 
-#agentic_tool
+# RAG - Vector Database
+faiss-cpu
+
+# Document Processing
+pypdf
+pymupdf
+
+# Web Search & HTTP
 langchain-community
+langchain-tavily
 ddgs
+requests
+
+# Environment
+python-dotenv
+pydantic
+
+# API
+fastapi
+uvicorn
+python-multipart
+
+# UI
+streamlit
+
+# Optional Retrieval
+rank-bm25

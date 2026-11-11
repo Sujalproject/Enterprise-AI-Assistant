@@ -77,3 +77,32 @@ builder.add_conditional_edges(
 )
 builder.add_edge("rewrite_question", "retrieve")
 chatbot=builder.compile(checkpointer=checkpointer)
+
+
+if __name__ == "__main__":
+    import os
+
+    print("Generating LangGraph visualization...")
+
+    try:
+        graph = chatbot.get_graph()
+
+        # Generate PNG
+        png_data = graph.draw_mermaid_png()
+
+        # Save in the same folder as graph.py
+        output_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "workflow.png"
+        )
+
+        with open(output_path, "wb") as f:
+            f.write(png_data)
+
+        print(f"SUCCESS! Graph saved at: {output_path}")
+
+        # Open image automatically
+        os.startfile(output_path)
+
+    except Exception as e:
+        print(f"FAILED: {type(e).__name__}: {e}")
