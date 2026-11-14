@@ -204,7 +204,6 @@ streamlit run app.py
 - ✅ Query Rewriting
 - ✅ Tavily Web Search
 - ✅ LangSmith Observability
-- ✅ Docker Support
 - 🔄 SQL Database Tool
 - 🔄 Long-Term Memory
 - 🔄 MCP Integration
